@@ -1,0 +1,21 @@
+#editor {
+    display: grid;
+    grid-template-columns: repeat(32,1fr);
+    gap: 0;
+    text-align: center;
+    width:50vW;
+    height:50vH;
+  }
+  #editor div{
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    border: 1px solid blue;
+    background-color: pink;
+  }
+  #editor div:hover{
+    background-color: rgb(74, 72, 72);
+  }
+  #editor div.clicked{
+    background-color: black;
+  }
