@@ -1,57 +1,74 @@
 let isDrawing = false; // To keep drawing when mouse is held
 const colors = ["red","black","green","blue","yellow","violet","pink"]; // Color palette
 
+let undoStack = [];
+
+
+
 let primaryColor = "black";
 let currentColor = primaryColor
 let erase = "white";
-const createEditor = (width,height)=>{
-    const container = document.getElementById("editor");
+
+
+const editorEvents = (grid,width,height)=>{
     for(let i=0;i<width;i++){
         for(let j=0;j<height;j++){
-            const row = document.createElement("div");
-            row.addEventListener("mousedown",(e)=>{
+            const cell = document.getElementById(`cell (${width},${height})`);
+            cell.addEventListener("mousedown",(e)=>{
                 e.preventDefault();
                 isDrawing = true;
             })
-            row.addEventListener("mousemove", (e)=>{
+            cell.addEventListener("mousemove", (e)=>{
                 console.log("Mouse button pressed: ",e.button);
                 if(isDrawing && e.button == 0){
-                    row.style.backgroundColor = primaryColor; // paint on left button click;
+                    cell.style.backgroundColor = primaryColor; // paint on left button click;
                 }
                 else if(isDrawing && e.button == 2){
-                    row.style.backgroundColor = erase; //erase on right mouse click;
+                    cell.style.backgroundColor = erase; //erase on right mouse click;
                 }
             })
-            row.addEventListener("mouseup", ()=>{
+            cell.addEventListener("mouseup", ()=>{
                 if(isDrawing)
                     isDrawing=false;
             })
-            row.addEventListener("click",(e)=>{
+            cell.addEventListener("click",(e)=>{
                 // When single cell is clicked instead of a mouse drag
                 if(e.button == 0){
-                    row.style.backgroundColor = primaryColor; // paint on left button click;
+                    cell.style.backgroundColor = primaryColor; // paint on left button click;
                 }
                 else if(e.button == 2){
-                    row.style.backgroundColor = erase; //erase on right mouse click;
+                    cell.style.backgroundColor = erase; //erase on right mouse click;
                 }
-                // row.style.backgroundColor = primaryColor;
+                // cell.style.backgroundColor = primaryColor;
             })
-            row.addEventListener("mouseover", () => {
+            cell.addEventListener("mouseover", () => {
                 // show primary color when mouse hovers over cell
-                if(!isDrawing && row.style.backgroundColor === erase){
-                    row.dataset.hover = true;
-                    row.style.backgroundColor = primaryColor;
+                if(!isDrawing && cell.style.backgroundColor === erase){
+                    cell.dataset.hover = true;
+                    cell.style.backgroundColor = primaryColor;
                 }
             })
-            row.addEventListener("mouseleave", () => {
+            cell.addEventListener("mouseleave", () => {
                 // set cell back to white after hover if no color was painted on pixel
-                if(row.dataset.hover){
-                    row.style.backgroundColor = erase;
-                    delete row.dataset.hover;
+                if(cell.dataset.hover){
+                    cell.style.backgroundColor = erase;
+                    delete cell.dataset.hover;
                 }
             })
-            
-            container.appendChild(row);
+        }
+    }
+}
+
+const createEditor = (width,height)=>{
+    const container = document.getElementById("editor");
+    const grid = new Array(width).fill(erase).map(()=> new Array(height).fill(erase));
+    console.log("Grid: ",grid)
+
+    for(let i=0;i<width;i++){
+        for(let j=0;j<height;j++){
+            const cell = document.createElement("div");
+            cell.id = `cell (${width},${height})`;                        
+            container.appendChild(cell);
         }
     }
 }
@@ -90,7 +107,7 @@ eraser.addEventListener("click",()=>{
     setColor(erase);
 })
 
-createEditor(32,32);
+createEditor(8,8);
 createPalette();
 
 const canvas = document.getElementById("pixelCanvas")
